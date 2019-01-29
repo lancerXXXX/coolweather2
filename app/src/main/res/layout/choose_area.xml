@@ -8,13 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary">
+
         <TextView
             android:id="@+id/title_text"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_centerInParent="true"
+            android:gravity="center"
             android:textColor="#fff"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
         <Button
             android:id="@+id/back_button"
             android:layout_width="25dp"
