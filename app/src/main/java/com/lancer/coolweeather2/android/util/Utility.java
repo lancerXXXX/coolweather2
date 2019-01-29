@@ -1,10 +1,13 @@
 package com.lancer.coolweeather2.android.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.google.gson.Gson;
 import com.lancer.coolweeather2.android.db.City;
 import com.lancer.coolweeather2.android.db.County;
 import com.lancer.coolweeather2.android.db.Province;
+import com.lancer.coolweeather2.android.gson.Weatherr;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,5 +78,22 @@ public class Utility {
             }
         }
         return false;
+    }
+    /**
+     * 将返回的JSON数据解析成Weather
+     */
+    public static Weatherr handleWeatherResponse(String response){
+        try{
+
+            JSONObject jsonObject= new JSONObject(response);
+            JSONArray jsonArray=jsonObject.getJSONArray("HeWeather6");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            Log.e("county",weatherContent);
+            return new Gson().fromJson(weatherContent,Weatherr.class);
+        }catch (Exception e){
+            Log.e("province","error");
+            e.printStackTrace();
+        }
+        return null;
     }
 }
