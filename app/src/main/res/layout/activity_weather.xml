@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="@drawable/round_shape"
     >
     <ImageView
         android:id="@+id/bing_pic_img"
@@ -23,8 +23,14 @@
             android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:fitsSystemWindows="true">
 
-            <ScrollView
+                <include layout="@layout/title" />
+            <android.support.v4.widget.NestedScrollView
                 android:id="@+id/weather_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -38,7 +44,7 @@
                     android:orientation="vertical"
                     >
 
-                    <include layout="@layout/title" />
+
 
                     <include layout="@layout/now" />
 
@@ -48,7 +54,8 @@
 
                     <include layout="@layout/suggsetion" />
                 </LinearLayout>
-            </ScrollView>
+            </android.support.v4.widget.NestedScrollView>
+            </LinearLayout>
         </android.support.v4.widget.SwipeRefreshLayout>
 
 

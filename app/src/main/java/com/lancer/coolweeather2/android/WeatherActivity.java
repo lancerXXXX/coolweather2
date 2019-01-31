@@ -1,5 +1,6 @@
 package com.lancer.coolweeather2.android;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.lancer.coolweeather2.android.gson.Weatherr;
+import com.lancer.coolweeather2.android.service.AutoUpdataService;
 import com.lancer.coolweeather2.android.util.HttpUtil;
 import com.lancer.coolweeather2.android.util.Utility;
 
@@ -42,7 +45,7 @@ public class WeatherActivity extends AppCompatActivity  {
     private TextView comfortText;
     private TextView carWashText;
     private TextView sportText;
-    private ScrollView weatherLayout;
+    private NestedScrollView weatherLayout;
     private ImageView bingPicImg;
     public SwipeRefreshLayout swipeRefresh;
     public DrawerLayout drawerLayout;
@@ -67,14 +70,10 @@ public class WeatherActivity extends AppCompatActivity  {
             //有缓存时直接解析天气数据
             Weatherr weatherr = Utility.handleWeatherResponse(weatherString);
             weatherId = weatherr.getBasic().getCid();
-            //*************************************************
-            Log.e("city","huancun "+weatherId);
             showWeatherInfo(weatherr);
         } else {
             //无缓存时去服务器查询天气
             weatherId = getIntent().getStringExtra("weather_id");
-            //*******************************************************
-            Log.e("city","intent   "+weatherId);
             weatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(weatherId);
         }
@@ -92,16 +91,15 @@ public class WeatherActivity extends AppCompatActivity  {
                 Weatherr weatherr = Utility.handleWeatherResponse(weatherString);
                 String qqq = weatherr.getBasic().getCid();
                 requestWeather(qqq);
-                //***********************************************
-                Log.e("city","refresh  "+weatherId);
             }
         });
         String bingPic = prefs.getString("bing_pic", null);
         if (bingPic != null) {
-            Glide.with(this).load(bingPic).into(bingPicImg);
+            //Glide.with(this).load(bingPic).into(bingPicImg);
         } else {
-            loadBingPic();
+            //loadBingPic();
         }
+
     }
 
     /**
@@ -139,7 +137,7 @@ public class WeatherActivity extends AppCompatActivity  {
                 });
             }
         });
-        loadBingPic();
+        //loadBingPic();
         return weatherId;
     }
 
@@ -171,7 +169,7 @@ public class WeatherActivity extends AppCompatActivity  {
      * 处理并展示Weather实体类中的数据
      */
     private void showWeatherInfo(Weatherr weatherr) {
-        Log.e("city", "show");
+        if (weatherr!=null&&"ok".equals(weatherr.getStatus())){
         String cityName = weatherr.getBasic().getLocation();
         String updataTime = weatherr.getUpdate().getLoc().split(" ")[1];
         String degree = weatherr.getNow().getTmp() + "℃";
@@ -199,6 +197,12 @@ public class WeatherActivity extends AppCompatActivity  {
         carWashText.setText("洗车指数：" + weatherr.getLifestyle().get(6).getBrf());
         sportText.setText("运动建议：" + weatherr.getLifestyle().get(3).getBrf());
         weatherLayout.setVisibility(View.VISIBLE);
+            Intent intent=new Intent(this,AutoUpdataService.class);
+            startService(intent);
+        }
+        else{
+            Toast.makeText(WeatherActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initView() {
@@ -212,7 +216,7 @@ public class WeatherActivity extends AppCompatActivity  {
         comfortText = (TextView) findViewById(R.id.comfort_text);
         carWashText = (TextView) findViewById(R.id.car_wash_text);
         sportText = (TextView) findViewById(R.id.sport_text);
-        weatherLayout = (ScrollView) findViewById(R.id.weather_layout);
+        weatherLayout = (NestedScrollView) findViewById(R.id.weather_layout);
         bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
