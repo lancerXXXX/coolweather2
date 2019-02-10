@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#ffffff">
+    android:background="@drawable/round_shape">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -24,14 +24,14 @@
             android:layout_marginLeft="10dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/ic_launcher_background"/>
+            android:background="@drawable/back"/>
 
     </RelativeLayout>
 
-    <ListView
+    <com.lancer.coolweeather2.android.util.MyListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ></ListView>
+        ></com.lancer.coolweeather2.android.util.MyListView>
 
 </LinearLayout>

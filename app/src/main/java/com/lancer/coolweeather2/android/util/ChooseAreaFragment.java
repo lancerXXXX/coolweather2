@@ -41,7 +41,7 @@ public class ChooseAreaFragment extends Fragment {
     private ProgressBar progressBar;
     private TextView titleText;
     private Button backButton;
-    private ListView listView;
+    private MyListView listView;
     private ArrayAdapter<String> adapter;
     private List<String> dataList = new ArrayList<>();
     //省列表

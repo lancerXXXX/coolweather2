@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +32,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class WeatherActivity extends AppCompatActivity  {
+public class WeatherActivity extends AppCompatActivity {
 
     private TextView titleCity;
     private TextView titleUpdataTime;
@@ -50,6 +49,10 @@ public class WeatherActivity extends AppCompatActivity  {
     public SwipeRefreshLayout swipeRefresh;
     public DrawerLayout drawerLayout;
     private Button navButton;
+    private Button myButton;
+    private TextView comfortSuggestion;
+    private TextView carWashSuggestion;
+    private TextView sportSuggestion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,9 @@ public class WeatherActivity extends AppCompatActivity  {
         if (Build.VERSION.SDK_INT >= 21) {
             View decorView = getWindow().getDecorView();
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
+
         }
         setContentView(R.layout.activity_weather);
         //初始化各控件
@@ -83,6 +88,12 @@ public class WeatherActivity extends AppCompatActivity  {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
+        myButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.openDrawer(GravityCompat.END);
+            }
+        });
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -95,8 +106,10 @@ public class WeatherActivity extends AppCompatActivity  {
         });
         String bingPic = prefs.getString("bing_pic", null);
         if (bingPic != null) {
+            //////////////////////////
             //Glide.with(this).load(bingPic).into(bingPicImg);
         } else {
+            /////////////////////
             //loadBingPic();
         }
 
@@ -110,7 +123,6 @@ public class WeatherActivity extends AppCompatActivity  {
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e("city", "onFailure");
                 Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
                 swipeRefresh.setRefreshing(false);
             }
@@ -125,11 +137,9 @@ public class WeatherActivity extends AppCompatActivity  {
                         if (weatherr != null && "ok".equals(weatherr.getStatus())) {
                             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
                             editor.putString("weather", responseText);
-                            Log.e("city","requst  "+responseText);
                             editor.apply();
                             showWeatherInfo(weatherr);
                         } else {
-                            Log.e("city", "else");
                             Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
                         }
                         swipeRefresh.setRefreshing(false);
@@ -137,6 +147,7 @@ public class WeatherActivity extends AppCompatActivity  {
                 });
             }
         });
+        ////////////////////
         //loadBingPic();
         return weatherId;
     }
@@ -169,39 +180,41 @@ public class WeatherActivity extends AppCompatActivity  {
      * 处理并展示Weather实体类中的数据
      */
     private void showWeatherInfo(Weatherr weatherr) {
-        if (weatherr!=null&&"ok".equals(weatherr.getStatus())){
-        String cityName = weatherr.getBasic().getLocation();
-        String updataTime = weatherr.getUpdate().getLoc().split(" ")[1];
-        String degree = weatherr.getNow().getTmp() + "℃";
-        String weatherInfo = weatherr.getNow().getCond_txt();
-        Log.e("city", weatherInfo);
-        titleCity.setText(cityName);
-        titleUpdataTime.setText(updataTime);
-        degreeText.setText(degree);
-        weatherInfoText.setText(weatherInfo);
-        forecastLayout.removeAllViews();
-        for (Weatherr.DailyForecastBean forecast : weatherr.getDaily_forecast()) {
-            View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
-            TextView dataText = view.findViewById(R.id.data_text);
-            TextView infoText = view.findViewById(R.id.info_text);
-            TextView maxText = view.findViewById(R.id.max_text);
-            TextView minText = view.findViewById(R.id.min_text);
-            dataText.setText(forecast.getDate());
-            infoText.setText(forecast.getCond_txt_d());
-            maxText.setText(forecast.getTmp_max());
-            minText.setText(forecast.getTmp_min());
-            forecastLayout.addView(view);
-        }
-        //////////之后添加空气质量&建议
-        comfortText.setText("舒适度: " + weatherr.getLifestyle().get(0).getBrf());
-        carWashText.setText("洗车指数：" + weatherr.getLifestyle().get(6).getBrf());
-        sportText.setText("运动建议：" + weatherr.getLifestyle().get(3).getBrf());
-        weatherLayout.setVisibility(View.VISIBLE);
-            Intent intent=new Intent(this,AutoUpdataService.class);
+        if (weatherr != null && "ok".equals(weatherr.getStatus())) {
+            String cityName = weatherr.getBasic().getLocation();
+            String updataTime = weatherr.getUpdate().getLoc().split(" ")[1];
+            String degree = weatherr.getNow().getTmp();
+            String weatherInfo = weatherr.getNow().getCond_txt();
+            Log.e("city", weatherInfo);
+            titleCity.setText(cityName);
+            titleUpdataTime.setText(updataTime);
+            degreeText.setText(degree);
+            weatherInfoText.setText(weatherInfo);
+            forecastLayout.removeAllViews();
+            for (Weatherr.DailyForecastBean forecast : weatherr.getDaily_forecast()) {
+                View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
+                TextView dataText = view.findViewById(R.id.data_text);
+                TextView infoText = view.findViewById(R.id.info_text);
+                TextView maxText = view.findViewById(R.id.max_text);
+                TextView minText = view.findViewById(R.id.min_text);
+                dataText.setText(forecast.getDate());
+                infoText.setText(forecast.getCond_txt_d());
+                maxText.setText(forecast.getTmp_max());
+                minText.setText(forecast.getTmp_min());
+                forecastLayout.addView(view);
+            }
+            //////////之后添加空气质量&建议
+            comfortText.setText("舒 适 度: " + weatherr.getLifestyle().get(0).getBrf());
+            comfortSuggestion.setText(weatherr.getLifestyle().get(0).getTxt());
+            carWashText.setText("洗车指数：" + weatherr.getLifestyle().get(6).getBrf());
+            carWashSuggestion.setText(weatherr.getLifestyle().get(6).getTxt());
+            sportText.setText(  "运动建议：" + weatherr.getLifestyle().get(3).getBrf());
+            sportSuggestion.setText(weatherr.getLifestyle().get(3).getTxt()+'\n');
+            weatherLayout.setVisibility(View.VISIBLE);
+            Intent intent = new Intent(this, AutoUpdataService.class);
             startService(intent);
-        }
-        else{
-            Toast.makeText(WeatherActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -221,6 +234,10 @@ public class WeatherActivity extends AppCompatActivity  {
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navButton = (Button) findViewById(R.id.nav_button);
+        comfortSuggestion = (TextView) findViewById(R.id.comfort_suggestion);
+        carWashSuggestion = (TextView) findViewById(R.id.car_wash_suggestion);
+        sportSuggestion = (TextView) findViewById(R.id.sport_suggestion);
+        myButton=(Button)findViewById(R.id.my_button);
     }
 
 }

@@ -20,18 +20,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:textSize="17sp"/>
+    <TextView
+        android:id="@+id/comfort_suggestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:textSize="14sp"
+        android:textColor="#646464"/>
     <TextView
         android:id="@+id/car_wash_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:textSize="17sp"/>
+    <TextView
+        android:id="@+id/car_wash_suggestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:textColor="#646464"
+        android:textSize="14sp"/>
     <TextView
         android:id="@+id/sport_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:textSize="17sp"/>
+    <TextView
+        android:id="@+id/sport_suggestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:textColor="#646464"
+        android:textSize="14sp"/>
 
 </LinearLayout>
