@@ -67,7 +67,7 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
         //初始化各控件
         initView();
-        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefresh.setColorSchemeResources(R.color.balack);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = prefs.getString("weather", null);
         final String weatherId;
@@ -104,14 +104,6 @@ public class WeatherActivity extends AppCompatActivity {
                 requestWeather(qqq);
             }
         });
-        String bingPic = prefs.getString("bing_pic", null);
-        if (bingPic != null) {
-            //////////////////////////
-            //Glide.with(this).load(bingPic).into(bingPicImg);
-        } else {
-            /////////////////////
-            //loadBingPic();
-        }
 
     }
 
@@ -147,35 +139,8 @@ public class WeatherActivity extends AppCompatActivity {
                 });
             }
         });
-        ////////////////////
-        //loadBingPic();
         return weatherId;
     }
-
-    private void loadBingPic() {
-        final String requestBingPic = "http://guolin.tech/api/bing_pic";
-        HttpUtil.sendOkHttpRequest(requestBingPic, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String bingPic = response.body().string();
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
-                editor.putString("bing_pic", bingPic);
-                editor.apply();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Glide.with(WeatherActivity.this).load(bingPic).into(bingPicImg);
-                    }
-                });
-            }
-        });
-    }
-
     /**
      * 处理并展示Weather实体类中的数据
      */
@@ -230,14 +195,22 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText = (TextView) findViewById(R.id.car_wash_text);
         sportText = (TextView) findViewById(R.id.sport_text);
         weatherLayout = (NestedScrollView) findViewById(R.id.weather_layout);
-        bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navButton = (Button) findViewById(R.id.nav_button);
+        //bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
+        //swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        //drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //navButton = (Button) findViewById(R.id.nav_button);
         comfortSuggestion = (TextView) findViewById(R.id.comfort_suggestion);
         carWashSuggestion = (TextView) findViewById(R.id.car_wash_suggestion);
         sportSuggestion = (TextView) findViewById(R.id.sport_suggestion);
-        myButton=(Button)findViewById(R.id.my_button);
+        //myButton=(Button)findViewById(R.id.my_button);
     }
 
 }
+
+
+
+
+
+
+
+

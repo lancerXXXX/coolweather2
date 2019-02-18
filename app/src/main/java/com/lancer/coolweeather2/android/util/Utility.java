@@ -84,11 +84,9 @@ public class Utility {
      */
     public static Weatherr handleWeatherResponse(String response){
         try{
-
             JSONObject jsonObject= new JSONObject(response);
             JSONArray jsonArray=jsonObject.getJSONArray("HeWeather6");
             String weatherContent = jsonArray.getJSONObject(0).toString();
-            Log.e("county",weatherContent);
             return new Gson().fromJson(weatherContent,Weatherr.class);
         }catch (Exception e){
             Log.e("province","error");

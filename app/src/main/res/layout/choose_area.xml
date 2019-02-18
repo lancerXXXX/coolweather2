@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/round_shape">
+    android:background="@drawable/round_shape"
+    android:fitsSystemWindows="true">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="6dp"
-        android:background="@drawable/round_shape">
+        android:background="@drawable/round_shape"
+        android:layout_marginTop="25dp">
 
         <TextView
             android:id="@+id/title_text"
@@ -16,7 +18,8 @@
             android:layout_height="?attr/actionBarSize"
             android:gravity="center"
             android:textColor="#000000"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            />
         <Button
             android:id="@+id/back_button"
             android:layout_width="25dp"
@@ -32,6 +35,8 @@
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ></com.lancer.coolweeather2.android.util.MyListView>
+        >
+
+    </com.lancer.coolweeather2.android.util.MyListView>
 
 </LinearLayout>

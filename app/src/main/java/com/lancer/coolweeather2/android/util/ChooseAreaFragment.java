@@ -19,10 +19,12 @@ import android.widget.Toast;
 
 import com.lancer.coolweeather2.android.MainActivity;
 import com.lancer.coolweeather2.android.R;
+import com.lancer.coolweeather2.android.Weather2;
 import com.lancer.coolweeather2.android.WeatherActivity;
 import com.lancer.coolweeather2.android.db.City;
 import com.lancer.coolweeather2.android.db.County;
 import com.lancer.coolweeather2.android.db.Province;
+import com.lancer.coolweeather2.android.gson.Weatherr;
 
 import org.litepal.LitePal;
 
@@ -84,15 +86,17 @@ public class ChooseAreaFragment extends Fragment {
                 }else if (currentLevel==LEVEL_COUNTY){
                     String weatherId=countyList.get(postion).getWeatherId();
                     if (getActivity() instanceof MainActivity){
-                    Intent intent=new Intent(getActivity(),WeatherActivity.class);
+                    Intent intent=new Intent(getActivity(),Weather2.class);
                     intent.putExtra("weather_id",weatherId);
                     startActivity(intent);
                     getActivity().finish();
-                    }else if (getActivity() instanceof WeatherActivity){
-                        WeatherActivity activity=(WeatherActivity) getActivity();
-                        activity.drawerLayout.closeDrawers();
-                        activity.swipeRefresh.setRefreshing(true);
-                        activity.requestWeather(weatherId);
+                    }else if (getActivity() instanceof Weather2){
+                        Weather2 activity=(Weather2) getActivity();
+                        LayoutInflater inflater = LayoutInflater.from(getContext());//获取LayoutInflater的实例
+                        View v = inflater.inflate(R.layout.activity_weather, null);//调用LayoutInflater实例的inflate()方法来加载页面的布局
+                        activity.viewList.add(v);
+                        activity.requestWeather(v,weatherId);
+                        activity.pagerAdapter.notifyDataSetChanged();
                     }
                 }
             }

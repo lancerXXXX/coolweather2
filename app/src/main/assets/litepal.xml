@@ -5,5 +5,6 @@
         <mapping class="com.lancer.coolweeather2.android.db.Province"/>
         <mapping class="com.lancer.coolweeather2.android.db.City"/>
         <mapping class="com.lancer.coolweeather2.android.db.County"/>
+        <mapping class="com.lancer.coolweeather2.android.db.cityWeatherString"/>
     </list>
 </litepal>

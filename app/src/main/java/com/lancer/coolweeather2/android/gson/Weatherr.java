@@ -1,8 +1,12 @@
 package com.lancer.coolweeather2.android.gson;
 
+import com.lancer.coolweeather2.android.Weather2;
+
+import org.litepal.crud.LitePalSupport;
+
 import java.util.List;
 
-public class Weatherr {
+public class Weatherr extends LitePalSupport {
     /**
      * basic : {"cid":"CN101070201","location":"大连","parent_city":"大连","admin_area":"辽宁","cnty":"中国","lat":"38.91458893","lon":"121.61862183","tz":"+8.00"}
      * update : {"loc":"2019-01-28 18:57","utc":"2019-01-28 10:57"}
@@ -12,7 +16,8 @@ public class Weatherr {
      * lifestyle : [{"type":"comf","brf":"较不舒适","txt":"白天天气较凉，且风力较强，您会感觉偏冷，不很舒适，请注意添加衣物，以防感冒。"},{"type":"drsg","brf":"冷","txt":"天气冷，建议着棉服、羽绒服、皮夹克加羊毛衫等冬季服装。年老体弱者宜着厚棉衣、冬大衣或厚羽绒服。"},{"type":"flu","brf":"较易发","txt":"虽然温度适宜但风力较大，仍较易发生感冒，体质较弱的朋友请注意适当防护。"},{"type":"sport","brf":"较不宜","txt":"天气较好，但考虑天气寒冷，风力较强，推荐您进行室内运动，若户外运动请注意保暖并做好准备活动。"},{"type":"trav","brf":"一般","txt":"天气较好，温度稍低，而且风稍大，让您感觉有些冷，会对外出有一定影响，外出注意防风保暖。"},{"type":"uv","brf":"弱","txt":"紫外线强度较弱，建议出门前涂擦SPF在12-15之间、PA+的防晒护肤品。"},{"type":"cw","brf":"较不宜","txt":"较不宜洗车，未来一天无雨，风力较大，如果执意擦洗汽车，要做好蒙上污垢的心理准备。"},{"type":"air","brf":"良","txt":"气象条件有利于空气污染物稀释、扩散和清除，可在室外正常活动。"}]
      */
 
-    private BasicBean basic;
+
+    public BasicBean basic;
     private UpdateBean update;
     private String status;
     private NowBean now;
@@ -80,7 +85,7 @@ public class Weatherr {
          */
 
         private String cid;
-        private String location;
+        public String location;
         private String parent_city;
         private String admin_area;
         private String cnty;
