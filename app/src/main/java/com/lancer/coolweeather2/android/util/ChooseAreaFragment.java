@@ -97,6 +97,9 @@ public class ChooseAreaFragment extends Fragment {
                         activity.viewList.add(v);
                         activity.requestWeather(v,weatherId);
                         activity.pagerAdapter.notifyDataSetChanged();
+                        activity.myRecyclerViewAdapter.notifyDataSetChanged();
+                        Log.e("card"," "+activity.cityNameList.size());
+                        Log.e("card","notify");
                     }
                 }
             }

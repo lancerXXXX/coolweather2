@@ -12,6 +12,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,14 +29,19 @@ import android.widget.Toast;
 import com.lancer.coolweeather2.android.db.cityWeatherString;
 import com.lancer.coolweeather2.android.gson.Weatherr;
 import com.lancer.coolweeather2.android.util.HttpUtil;
+import com.lancer.coolweeather2.android.util.ItemTouchHelperAdapter;
+import com.lancer.coolweeather2.android.util.MyRecyclerViewAdapter;
 import com.lancer.coolweeather2.android.util.MypagerAdapter;
+import com.lancer.coolweeather2.android.util.RecyclerViewItemListener;
 import com.lancer.coolweeather2.android.util.Utility;
 import com.lancer.coolweeather2.android.util.VpSwipeRefreshLayout;
+import com.lancer.coolweeather2.android.util.myItemTouchHelperCallBack;
 
 import org.litepal.LitePal;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.Call;
@@ -47,12 +55,15 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
     public List<String> cityNameList;
     public List<cityWeatherString> cityWeaherStringList;
     public MypagerAdapter pagerAdapter;
+    public MyRecyclerViewAdapter myRecyclerViewAdapter;
     private TextView title_city;
     private Button cityChoose;
     private VpSwipeRefreshLayout swipeRefresh;
     private int height;
     private RelativeLayout mrlay;
     private DrawerLayout drawerLayout;
+    private RecyclerView myRecyclerView;
+    private RelativeLayout title_layout;
 
 
     @Override
@@ -72,11 +83,67 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
         viewList = new ArrayList<View>();
         cityNameList = new ArrayList<String>();
         cityWeaherStringList = new ArrayList<cityWeatherString>();
+
+
         pagerAdapter = new MypagerAdapter(viewList);
         final LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.main_weather, null);
         viewList.add(view);
         weatherViewpager.setAdapter(pagerAdapter);
+
+
+        myRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        RecyclerView.LayoutManager layout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        myRecyclerView.setLayoutManager(layout);
+        myRecyclerView.setHasFixedSize(true);
+        myRecyclerViewAdapter = new MyRecyclerViewAdapter(cityNameList,cityWeaherStringList,viewList);
+        myRecyclerView.setAdapter(myRecyclerViewAdapter);
+        myRecyclerViewAdapter.setMrecyclerViewItemListener(new RecyclerViewItemListener() {
+            @Override
+            public void onClick(View view, int position) {
+                weatherViewpager.setCurrentItem(position+1);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        });
+        ItemTouchHelper.Callback callback=new myItemTouchHelperCallBack(new ItemTouchHelperAdapter() {
+            @Override
+            public void onItemMove(int fromPostion, int toPosition) {
+                //交换位置
+                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
+                //Collections.swap(myRecyclerViewAdapter.viewList,fromPostion+1,toPosition+1);
+                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
+                Collections.swap(myRecyclerViewAdapter.cityWeatherStrings,fromPostion,toPosition);
+                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
+                Collections.swap(myRecyclerViewAdapter.data,fromPostion,toPosition);
+                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
+                myRecyclerViewAdapter.notifyItemMoved(fromPostion,toPosition);
+                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
+                //pagerAdapter.notifyDataSetChanged();
+                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
+            }
+
+            @Override
+            public void onItemDelete(int position) {
+                Log.e("flag","delete "+position);
+
+                Log.e("flag","delete "+position);
+                myRecyclerViewAdapter.viewList.remove(position+1);
+                myRecyclerViewAdapter.cityWeatherStrings.remove(position);
+                myRecyclerViewAdapter.data.remove(position);
+                myRecyclerViewAdapter.notifyItemRemoved(position);
+                pagerAdapter.notifyDataSetChanged();
+                Log.e("flag","delete "+position);
+            }
+        });
+        ItemTouchHelper touchHelper=new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(myRecyclerView);
+
+
+
         List<cityWeatherString> Temp_weatherList = LitePal.findAll(cityWeatherString.class);
         for (int i = 0; i < Temp_weatherList.size(); i++) {
             cityWeaherStringList.add(Temp_weatherList.get(i));
@@ -86,12 +153,15 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
             cityNameList.add(www.getBasic().getLocation());
             showWeatherInfo(view1, www);
             pagerAdapter.notifyDataSetChanged();
-
+            myRecyclerViewAdapter.notifyDataSetChanged();
+            Log.e("card", "notifyhuancun");
         }
 
         if (Temp_weatherList.size() == 0) {
             weatherViewpager.setCurrentItem(0);
+            myRecyclerView.setVisibility(View.VISIBLE);
         } else {
+            myRecyclerView.setVisibility(View.GONE);
             cityChoose.setVisibility(View.GONE);
             title_city = (TextView) findViewById(R.id.title_city);
             title_city.setText(cityNameList.get(0).toString());
@@ -123,14 +193,9 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onClick(View view) {
                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.city_choose, null);
-                    cityChoose.setBackground(drawable);
                     drawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.city_choose_back, null);
-                    cityChoose.setBackground(drawable);
                     drawerLayout.openDrawer(GravityCompat.START);
-                    cityChoose.setBackground(drawable);
                 }
 
             }
@@ -149,11 +214,12 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
                 View titleView = inflater.inflate(R.layout.title, null);
                 if (i == 0) {
                     title_city.setText("");
-                    cityChoose.setVisibility(View.VISIBLE);
+                   cityChoose.setVisibility(View.VISIBLE);
+                    myRecyclerView.setVisibility(View.VISIBLE);
                 } else {
-                    //titleView.setVisibility(View.VISIBLE);
                     title_city.setText(cityNameList.get(i - 1));
                     cityChoose.setVisibility(View.GONE);
+                    myRecyclerView.setVisibility(View.GONE);
                 }
             }
 
@@ -167,8 +233,9 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
     private void initView() {
         weatherViewpager = (ViewPager) findViewById(R.id.weather_view_page);
         cityChoose = (Button) findViewById(R.id.city_choose);
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_main);
+
+        title_layout = (RelativeLayout) findViewById(R.id.title_layout);
     }
 
     /**
@@ -190,25 +257,29 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
                 temp.setResponse(responseText);
                 final Weatherr weatherr = Utility.handleWeatherResponse(responseText);
                 cityNameList.add(weatherr.getBasic().getLocation());
+
+                Log.e("card", "zhelei   " + cityNameList.size());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        myRecyclerViewAdapter.notifyDataSetChanged();
                         if (weatherr != null && "ok".equals(weatherr.getStatus())) {
                             int flag = 0;
                             int line = 0;
                             for (cityWeatherString wea : cityWeaherStringList) {
                                 Weatherr ww = Utility.handleWeatherResponse(wea.getResponse());
-                                if (ww.getBasic().getCid() == weatherr.getBasic().getCid()) {
+                                if (ww.getBasic().getCid().toString().equals(weatherr.getBasic().getCid().toString())) {
                                     flag = 1;
                                     break;
                                 }
                                 line++;
                             }
                             if (flag == 1) {
-                                temp.update(line);
-                            } else {
                                 cityWeaherStringList.add(temp);
-                                temp.save();
+                                Toast.makeText(Weather2.this,"已经添加过该城市",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Weather2.this,"添加该城市",Toast.LENGTH_SHORT).show();
+                                cityWeaherStringList.add(temp);
                             }
 
 
@@ -219,6 +290,7 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
                             Toast.makeText(Weather2.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
                         }
                         //swipeRefresh.setRefreshing(false);
+
                     }
                 });
             }
@@ -316,5 +388,31 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
 
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        int i =LitePal.findAll(cityWeatherString.class).size();
+        int ii=1;
+        int iii=1;
+        if(cityWeaherStringList.size()<=i){
+        for(cityWeatherString cityWeatherString:cityWeaherStringList){
+            cityWeatherString.update(ii);
+            ii++;
+        }for(;ii<=i;ii++){
+            LitePal.delete(cityWeatherString.class,ii);
+        }}
+        else{
+            for(;iii<=i;ii++){
+                cityWeatherString cc=cityWeaherStringList.get(iii-1);
+                cc.update(ii);
+            }
+            for(;iii<=cityWeaherStringList.size();iii++){
+                cityWeatherString cc=cityWeaherStringList.get(iii-1);
+                cc.save();
+            }
+        }
+
     }
 }

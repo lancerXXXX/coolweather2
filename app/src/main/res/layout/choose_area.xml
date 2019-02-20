@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/round_shape"
+    android:background="@drawable/round_shape2"
     android:fitsSystemWindows="true">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="6dp"
-        android:background="@drawable/round_shape"
+        android:background="@drawable/round_shape2"
         android:layout_marginTop="25dp">
 
         <TextView
