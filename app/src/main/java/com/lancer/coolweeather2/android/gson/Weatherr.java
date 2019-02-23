@@ -6,7 +6,7 @@ import org.litepal.crud.LitePalSupport;
 
 import java.util.List;
 
-public class Weatherr extends LitePalSupport {
+public class Weatherr{
     /**
      * basic : {"cid":"CN101070201","location":"大连","parent_city":"大连","admin_area":"辽宁","cnty":"中国","lat":"38.91458893","lon":"121.61862183","tz":"+8.00"}
      * update : {"loc":"2019-01-28 18:57","utc":"2019-01-28 10:57"}

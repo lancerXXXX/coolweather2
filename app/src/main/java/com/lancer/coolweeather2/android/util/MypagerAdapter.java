@@ -12,6 +12,7 @@ public class MypagerAdapter extends PagerAdapter {
 
     private List<View> mListView;
     private View mCurrentView;
+    int position;
 
     public MypagerAdapter(List<View> listView){
         mListView=listView;
@@ -23,6 +24,7 @@ public class MypagerAdapter extends PagerAdapter {
 
     @Override
     public void notifyDataSetChanged() {
+        Log.e("flag","notifyDataSetChanged");
         super.notifyDataSetChanged();
     }
 
@@ -33,7 +35,7 @@ public class MypagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        //super.destroyItem(container, position, object);
+        Log.e("flag","destroy "+position);
         container.removeView((View)object);
     }
 
@@ -46,8 +48,14 @@ public class MypagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        //return super.instantiateItem(container, position);
-        container.addView(mListView.get(position));
+        View v=mListView.get(position);
+        v.setTag(position);
+        ViewGroup parent = (ViewGroup) v.getParent();
+        if (parent != null) {
+            parent.removeAllViews();
+        }
+        Log.e("flag","instantiateItem "+position);
+        container.addView(mListView.get(position),0);
         return mListView.get(position);
     }
 
@@ -56,6 +64,10 @@ public class MypagerAdapter extends PagerAdapter {
     }
     @Override
     public int getItemPosition(@NonNull Object object) {
-        return super.getItemPosition(object);
+        View view=(View)object;
+        if((int)view.getTag()==0)
+            return POSITION_UNCHANGED;
+        else
+            return POSITION_NONE;
     }
 }

@@ -1,6 +1,5 @@
 package com.lancer.coolweeather2.android.util;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,19 +11,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lancer.coolweeather2.android.MainActivity;
 import com.lancer.coolweeather2.android.R;
 import com.lancer.coolweeather2.android.Weather2;
-import com.lancer.coolweeather2.android.WeatherActivity;
 import com.lancer.coolweeather2.android.db.City;
 import com.lancer.coolweeather2.android.db.County;
 import com.lancer.coolweeather2.android.db.Province;
-import com.lancer.coolweeather2.android.gson.Weatherr;
 
 import org.litepal.LitePal;
 
@@ -85,12 +80,7 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if (currentLevel==LEVEL_COUNTY){
                     String weatherId=countyList.get(postion).getWeatherId();
-                    if (getActivity() instanceof MainActivity){
-                    Intent intent=new Intent(getActivity(),Weather2.class);
-                    intent.putExtra("weather_id",weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
-                    }else if (getActivity() instanceof Weather2){
+                    if (getActivity() instanceof Weather2){
                         Weather2 activity=(Weather2) getActivity();
                         LayoutInflater inflater = LayoutInflater.from(getContext());//获取LayoutInflater的实例
                         View v = inflater.inflate(R.layout.activity_weather, null);//调用LayoutInflater实例的inflate()方法来加载页面的布局
@@ -98,8 +88,6 @@ public class ChooseAreaFragment extends Fragment {
                         activity.requestWeather(v,weatherId);
                         activity.pagerAdapter.notifyDataSetChanged();
                         activity.myRecyclerViewAdapter.notifyDataSetChanged();
-                        Log.e("card"," "+activity.cityNameList.size());
-                        Log.e("card","notify");
                     }
                 }
             }

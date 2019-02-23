@@ -33,9 +33,7 @@ public class MyListView extends ListView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-
-
-        setSelector(R.drawable.round_shape);
         return super.onTouchEvent(ev);
     }
+
 }

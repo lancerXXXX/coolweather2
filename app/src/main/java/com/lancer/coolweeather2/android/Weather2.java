@@ -80,18 +80,19 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
         initView();
         height = getAndroiodScreenProperty();
 
+        //初始化
         viewList = new ArrayList<View>();
         cityNameList = new ArrayList<String>();
         cityWeaherStringList = new ArrayList<cityWeatherString>();
 
-
+        //ViewPager适配
         pagerAdapter = new MypagerAdapter(viewList);
         final LayoutInflater inflater = getLayoutInflater();
-        View view = inflater.inflate(R.layout.main_weather, null);
+        final View view = inflater.inflate(R.layout.main_weather, null);
         viewList.add(view);
         weatherViewpager.setAdapter(pagerAdapter);
 
-
+        //RecyclerView适配
         myRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         RecyclerView.LayoutManager layout = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         myRecyclerView.setLayoutManager(layout);
@@ -109,41 +110,40 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
 
             }
         });
+
+        //CardView回调
         ItemTouchHelper.Callback callback=new myItemTouchHelperCallBack(new ItemTouchHelperAdapter() {
             @Override
             public void onItemMove(int fromPostion, int toPosition) {
                 //交换位置
-                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
-                //Collections.swap(myRecyclerViewAdapter.viewList,fromPostion+1,toPosition+1);
-                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
+                for (View view1:viewList){
+                    Log.e("flag",view1.toString());
+                }
+                Log.e("flag","                                   ");
+                Collections.swap(myRecyclerViewAdapter.viewList,fromPostion+1,toPosition+1);
+                for (View view1:viewList){
+                    Log.e("flag",view1.toString());
+                }
                 Collections.swap(myRecyclerViewAdapter.cityWeatherStrings,fromPostion,toPosition);
-                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
                 Collections.swap(myRecyclerViewAdapter.data,fromPostion,toPosition);
-                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
                 myRecyclerViewAdapter.notifyItemMoved(fromPostion,toPosition);
-                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
-                //pagerAdapter.notifyDataSetChanged();
-                Log.e("flag","jiaohuan  "+fromPostion+"   "+toPosition);
+                pagerAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onItemDelete(int position) {
-                Log.e("flag","delete "+position);
-
-                Log.e("flag","delete "+position);
                 myRecyclerViewAdapter.viewList.remove(position+1);
                 myRecyclerViewAdapter.cityWeatherStrings.remove(position);
                 myRecyclerViewAdapter.data.remove(position);
                 myRecyclerViewAdapter.notifyItemRemoved(position);
                 pagerAdapter.notifyDataSetChanged();
-                Log.e("flag","delete "+position);
             }
         });
         ItemTouchHelper touchHelper=new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(myRecyclerView);
 
 
-
+        //读取缓存
         List<cityWeatherString> Temp_weatherList = LitePal.findAll(cityWeatherString.class);
         for (int i = 0; i < Temp_weatherList.size(); i++) {
             cityWeaherStringList.add(Temp_weatherList.get(i));
@@ -154,41 +154,23 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
             showWeatherInfo(view1, www);
             pagerAdapter.notifyDataSetChanged();
             myRecyclerViewAdapter.notifyDataSetChanged();
-            Log.e("card", "notifyhuancun");
         }
 
         if (Temp_weatherList.size() == 0) {
             weatherViewpager.setCurrentItem(0);
             myRecyclerView.setVisibility(View.VISIBLE);
+            Log.e("flag","huancun==0");
         } else {
-            myRecyclerView.setVisibility(View.GONE);
-            cityChoose.setVisibility(View.GONE);
+            myRecyclerView.setVisibility(View.INVISIBLE);
+            cityChoose.setVisibility(View.INVISIBLE);
             title_city = (TextView) findViewById(R.id.title_city);
             title_city.setText(cityNameList.get(0).toString());
             weatherViewpager.setCurrentItem(1);
+            Log.e("flag","huancun>0");
         }
 
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View view, float v) {
 
-            }
-
-            @Override
-            public void onDrawerOpened(@NonNull View view) {
-                //weatherViewpager.setEnabled(false);
-            }
-
-            @Override
-            public void onDrawerClosed(@NonNull View view) {
-                //weatherViewpager.setEnabled(true);
-            }
-
-            @Override
-            public void onDrawerStateChanged(int i) {
-
-            }
-        });
+        //城市选择按钮监听
         cityChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -200,6 +182,9 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
 
             }
         });
+
+
+        //ViewPager监听
         weatherViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
@@ -209,17 +194,17 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onPageSelected(int i) {
                 weatherViewpager.setTag(i);
-                Log.e("change", " " + i);
                 title_city = (TextView) findViewById(R.id.title_city);
                 View titleView = inflater.inflate(R.layout.title, null);
                 if (i == 0) {
                     title_city.setText("");
-                   cityChoose.setVisibility(View.VISIBLE);
+                    cityChoose.setVisibility(View.VISIBLE);
                     myRecyclerView.setVisibility(View.VISIBLE);
+
                 } else {
                     title_city.setText(cityNameList.get(i - 1));
-                    cityChoose.setVisibility(View.GONE);
-                    myRecyclerView.setVisibility(View.GONE);
+                    cityChoose.setVisibility(View.INVISIBLE);
+                    myRecyclerView.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -230,6 +215,8 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
         });
     }
 
+
+    //布局初始化
     private void initView() {
         weatherViewpager = (ViewPager) findViewById(R.id.weather_view_page);
         cityChoose = (Button) findViewById(R.id.city_choose);
@@ -237,6 +224,17 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
 
         title_layout = (RelativeLayout) findViewById(R.id.title_layout);
     }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 根据天气id请求天气信息
@@ -247,7 +245,6 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onFailure(Call call, IOException e) {
                 Toast.makeText(Weather2.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
-                //currentView.swipeRefresh.setRefreshing(false);
             }
 
             @Override
@@ -258,7 +255,6 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
                 final Weatherr weatherr = Utility.handleWeatherResponse(responseText);
                 cityNameList.add(weatherr.getBasic().getLocation());
 
-                Log.e("card", "zhelei   " + cityNameList.size());
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -281,15 +277,11 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
                                 Toast.makeText(Weather2.this,"添加该城市",Toast.LENGTH_SHORT).show();
                                 cityWeaherStringList.add(temp);
                             }
-
-
                             showWeatherInfo(v, weatherr);
-
 
                         } else {
                             Toast.makeText(Weather2.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
                         }
-                        //swipeRefresh.setRefreshing(false);
 
                     }
                 });
@@ -314,7 +306,6 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
         TextView carWashText = (TextView) v.findViewById(R.id.car_wash_text);
         TextView sportText = (TextView) v.findViewById(R.id.sport_text);
         NestedScrollView weatherLayout = (NestedScrollView) v.findViewById(R.id.weather_layout);
-        //SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh);
         TextView comfortSuggestion = (TextView) v.findViewById(R.id.comfort_suggestion);
         TextView carWashSuggestion = (TextView) v.findViewById(R.id.car_wash_suggestion);
         TextView sportSuggestion = (TextView) v.findViewById(R.id.sport_suggestion);
@@ -339,9 +330,7 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
                 forecastLayout.addView(view);
             }
             //////////之后添加空气质量&建议
-            Log.e("change", "pre      " + apiText.getText().toString());
             apiText.setText(weatherr.getBasic().getLocation());
-            Log.e("change", "current  " + weatherr.getBasic().getLocation());
             comfortText.setText("舒 适 度: " + weatherr.getLifestyle().get(0).getBrf());
             comfortSuggestion.setText(weatherr.getLifestyle().get(0).getTxt());
             carWashText.setText("洗车指数：" + weatherr.getLifestyle().get(6).getBrf());
@@ -367,8 +356,6 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
         wm.getDefaultDisplay().getMetrics(dm);
         int height = dm.heightPixels;// 屏幕宽度（像素）
         float density = dm.density;// 屏幕密度（0.75 / 1.0 / 1.5）
-        // 屏幕宽度算法:屏幕宽度（像素）/屏幕密度
-        // 屏幕宽度(dp)
         int screenHeight = (int) (height / density);
         int statusBarHeight1 = 0;//获取status_bar_height资源的ID
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -376,8 +363,6 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
             //根据资源ID获取响应的尺寸值
             statusBarHeight1 = getResources().getDimensionPixelSize(resourceId);
         }
-        Log.e("change", "高度高度高:" + screenHeight);
-        Log.e("change", "状态栏方法:" + statusBarHeight1);
         return height - statusBarHeight1;
     }
 
@@ -385,7 +370,6 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.city_choose:
-
                 break;
         }
     }

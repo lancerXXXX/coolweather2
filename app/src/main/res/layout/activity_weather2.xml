@@ -9,9 +9,6 @@
     android:background="@color/white"
     android:fitsSystemWindows="true">
 
-
-
-
         <android.support.v4.view.ViewPager
             android:id="@+id/weather_view_page"
             android:layout_width="match_parent"
@@ -22,15 +19,12 @@
 
         <include layout="@layout/title" />
 
-
-
 </RelativeLayout>
         <fragment
-
-    android:id="@+id/choose_area_fragment_main"
-    android:name="com.lancer.coolweeather2.android.util.ChooseAreaFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="start"
-    />
+                android:id="@+id/choose_area_fragment_main"
+                android:name="com.lancer.coolweeather2.android.util.ChooseAreaFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                />
 </android.support.v4.widget.DrawerLayout>

@@ -12,9 +12,6 @@
         android:roundIcon="@mipmap/logo5"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-
-        </activity>
         <activity android:name=".WeatherActivity" />
 
         <service
