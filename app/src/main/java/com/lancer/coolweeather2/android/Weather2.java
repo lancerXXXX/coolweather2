@@ -168,14 +168,14 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
         if (Temp_weatherList.size() == 0) {
             weatherViewpager.setCurrentItem(0);
             myRecyclerView.setVisibility(View.VISIBLE);
-            Log.e("flag","huancun==0");
+            //Log.e("flag","huancun==0");
         } else {
             myRecyclerView.setVisibility(View.INVISIBLE);
             cityChoose.setVisibility(View.INVISIBLE);
             title_city = (TextView) findViewById(R.id.title_city);
             title_city.setText(cityNameList.get(0).toString());
             weatherViewpager.setCurrentItem(1);
-            Log.e("flag","huancun>0");
+            //Log.e("flag","huancun>0");
         }
 
 
@@ -436,26 +436,36 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        int i =LitePal.findAll(cityWeatherString.class).size();
-        int ii=1;
-        int iii=1;
-        if(cityWeaherStringList.size()<=i){
-        for(cityWeatherString cityWeatherString:cityWeaherStringList){
-            cityWeatherString.update(ii);
-            ii++;
-        }for(;ii<=i;ii++){
-            LitePal.delete(cityWeatherString.class,ii);
-        }}
-        else{
-            for(;iii<=i;ii++){
-                cityWeatherString cc=cityWeaherStringList.get(iii-1);
-                cc.update(ii);
+        int original =LitePal.findAll(cityWeatherString.class).size();
+        Log.e("change","yuanlai "+original);
+        int now=cityWeaherStringList.size();
+        Log.e("change","now"+now);
+        if (now<=original){
+            int i=0;
+            for(;i<now;i++){
+                cityWeatherString temp=cityWeaherStringList.get(i);
+                temp.update(i+1);
+                Log.e("change","update 1 "+temp.getResponse().substring(75,90));
             }
-            for(;iii<=cityWeaherStringList.size();iii++){
-                cityWeatherString cc=cityWeaherStringList.get(iii-1);
-                cc.save();
+            int delete=i+1;
+            if (delete<original){
+                for (;i<original;i++){
+                    LitePal.delete(cityWeatherString.class,delete);
+                }
             }
         }
-
+        else {
+            int i=0;
+            for (;i<original;i++){
+                cityWeatherString temp=cityWeaherStringList.get(i);
+                temp.update(i+1);
+                Log.e("change","update 2 "+temp.getResponse().substring(75,90));
+            }
+            for (;i<now;i++){
+                cityWeatherString temp=cityWeaherStringList.get(i);
+                temp.save();
+                Log.e("change","save 2 "+temp.getResponse().substring(75,90));
+            }
+        }
     }
 }
