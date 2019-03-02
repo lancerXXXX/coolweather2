@@ -12,13 +12,12 @@
             android:orientation="vertical">
             />
 
-            <android.support.v4.widget.NestedScrollView
+            <com.lancer.coolweeather2.android.util.MyScrollView
                 android:id="@+id/weather_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="never"
+                android:overScrollMode="always"
                 android:scrollbars="none">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -29,10 +28,9 @@
 
                     <include layout="@layout/forecast" />
 
-                    <include layout="@layout/aqi" />
 
                     <include layout="@layout/suggsetion" />
                 </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
+            </com.lancer.coolweeather2.android.util.MyScrollView>
             </LinearLayout>
 </LinearLayout>

@@ -31,6 +31,7 @@ import com.lancer.coolweeather2.android.gson.Weatherr;
 import com.lancer.coolweeather2.android.util.HttpUtil;
 import com.lancer.coolweeather2.android.util.ItemTouchHelperAdapter;
 import com.lancer.coolweeather2.android.util.MyRecyclerViewAdapter;
+import com.lancer.coolweeather2.android.util.MyScrollView;
 import com.lancer.coolweeather2.android.util.MypagerAdapter;
 import com.lancer.coolweeather2.android.util.RecyclerViewItemListener;
 import com.lancer.coolweeather2.android.util.Utility;
@@ -155,6 +156,14 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
             pagerAdapter.notifyDataSetChanged();
             myRecyclerViewAdapter.notifyDataSetChanged();
         }
+
+        for (int i=0;i<cityWeaherStringList.size();i++){
+            View view1=viewList.get(i+1);
+            Weatherr www=Utility.handleWeatherResponse(cityWeaherStringList.get(i).getResponse());
+            refresh(view1,www.getBasic().getCid());
+            pagerAdapter.notifyDataSetChanged();
+        }
+
 
         if (Temp_weatherList.size() == 0) {
             weatherViewpager.setCurrentItem(0);
@@ -305,7 +314,7 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
         TextView comfortText = (TextView) v.findViewById(R.id.comfort_text);
         TextView carWashText = (TextView) v.findViewById(R.id.car_wash_text);
         TextView sportText = (TextView) v.findViewById(R.id.sport_text);
-        NestedScrollView weatherLayout = (NestedScrollView) v.findViewById(R.id.weather_layout);
+        MyScrollView weatherLayout = (MyScrollView) v.findViewById(R.id.weather_layout);
         TextView comfortSuggestion = (TextView) v.findViewById(R.id.comfort_suggestion);
         TextView carWashSuggestion = (TextView) v.findViewById(R.id.car_wash_suggestion);
         TextView sportSuggestion = (TextView) v.findViewById(R.id.sport_suggestion);
@@ -330,7 +339,7 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
                 forecastLayout.addView(view);
             }
             //////////之后添加空气质量&建议
-            apiText.setText(weatherr.getBasic().getLocation());
+            //apiText.setText(weatherr.getBasic().getLocation());
             comfortText.setText("舒 适 度: " + weatherr.getLifestyle().get(0).getBrf());
             comfortSuggestion.setText(weatherr.getLifestyle().get(0).getTxt());
             carWashText.setText("洗车指数：" + weatherr.getLifestyle().get(6).getBrf());
@@ -345,6 +354,56 @@ public class Weather2 extends AppCompatActivity implements View.OnClickListener 
         } else {
             Toast.makeText(Weather2.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
         }
+    }
+    public String refresh(final View v, final String weatherId) {
+        String weatherUrl = "https://free-api.heweather.net/s6/weather?key=e297a7e1bfa441b18c2776f196c89d58&location=" + weatherId;
+        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Toast.makeText(Weather2.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText = response.body().string();
+                final cityWeatherString temp = new cityWeatherString();
+                temp.setResponse(responseText);
+                final Weatherr weatherr = Utility.handleWeatherResponse(responseText);
+                //cityNameList.add(weatherr.getBasic().getLocation());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        myRecyclerViewAdapter.notifyDataSetChanged();
+                        if (weatherr != null && "ok".equals(weatherr.getStatus())) {
+                            int flag = 0;
+                            int line = 0;
+                            for (cityWeatherString wea : cityWeaherStringList) {
+                                Weatherr ww = Utility.handleWeatherResponse(wea.getResponse());
+                                if (ww.getBasic().getCid().toString().equals(weatherr.getBasic().getCid().toString())) {
+                                    flag = 1;
+                                    break;
+                                }
+                                line++;
+                            }
+                            if (flag == 1) {
+                                //cityWeaherStringList.add(temp);
+                                Toast.makeText(Weather2.this,"刷新城市天气",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Weather2.this,"刷新城市天气",Toast.LENGTH_SHORT).show();
+                                //cityWeaherStringList.add(temp);
+                            }
+                            showWeatherInfo(v, weatherr);
+
+                        } else {
+                            Toast.makeText(Weather2.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+            }
+        });
+        return weatherId;
     }
 
     /*
